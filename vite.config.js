@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api/contactForm': {
-        target: "https://backend-jazg.onrender.com",
+        target: "https://backend-htwc.onrender.com",
         changeOrigin: true,
         //rewrite: (path) => path.replace(/^\/api/contactForms, ''),
         secure: false

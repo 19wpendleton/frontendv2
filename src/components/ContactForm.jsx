@@ -45,7 +45,7 @@ const ContactForm = () => {
     
         if(email && subject && questions && name) {
             axios
-                .post('https://backend-jazg.onrender.com/send_email', {
+                .post('https://backend-htwc.onrender.com/send_email', {
                     name,
                     email,
                     subject,
