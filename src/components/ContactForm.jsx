@@ -18,7 +18,6 @@ const ContactForm = () => {
 
         const response = await fetch('/api/contactForm', {
             method: 'POST',
-            mode: 'no-cors',
             body: JSON.stringify(contactForm),
             headers: {
                 'Content-Type': 'application/json'
