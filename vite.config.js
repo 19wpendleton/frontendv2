@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api/contactForm': {
-        target: "https://backend-htwc.onrender.com",
+        target: "http://localhost:4000",
         changeOrigin: true,
         //rewrite: (path) => path.replace(/^\/api/contactForms, ''),
         secure: false

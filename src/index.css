@@ -159,6 +159,9 @@ div.error {
 input.error {
   border: 1px solid var(--error);
 }
+textarea.error {
+  border: 1px solid var(--error);
+}
 /* crypto form */
 .Crypto {
   color: #fff;

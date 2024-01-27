@@ -54,6 +54,23 @@ const Breakout = (props) => {
 
             })
         
+        window.addEventListener('touchmove', 
+            function(event) {
+                mouse.x = event.x - canvas.offsetLeft;
+                mouse.y = event.y - canvas.getBoundingClientRect().top;
+                canvas.width = CANVAS_WIDTH;
+                canvas.height = CANVAS_HEIGHT;
+                if (
+                    mouse.x >= 0 &&
+                    mouse.x <= canvas.width &&
+                    mouse.y >= 0 &&
+                    mouse.y <= canvas.height
+                ) {
+                    paddle.x = mouse.x - PADDLE_WIDTH / 2;
+                }
+
+            })
+        
         var pointerDown = false;
         window.addEventListener('pointerdown',
             function(event) {

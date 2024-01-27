@@ -1,66 +1,52 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useContactFormContext } from "../hooks/useContactFormContext";
-import axios from 'axios';
+import emailjs from '@emailjs/browser'
 
 const ContactForm = () => {
-    const { dispatch } = useContactFormContext()
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
-    const [subject, setSubject] = useState('')
     const [questions, setQuestions] = useState('')
     const [error, setError] = useState(null)
     const [emptyFields, setEmptyFields] = useState([])
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
+    const form = useRef();
 
-        const contactForm = {name, email, subject, questions}
+    const sendEmail = (e) => {
+        e.preventDefault();
 
-        const response = await fetch('/api/contactForm', {
-            method: 'POST',
-            body: JSON.stringify(contactForm),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        const json = await response.json();
+        // Check for empty fields
+        const fields = {
+            name: name.trim(),
+            email: email.trim(),
+            questions: questions.trim()
+        };
 
-        if (!response.ok) {
-            setError(json.error)
-            setEmptyFields(json.emptyFields)
+        const emptyFields = Object.keys(fields).filter(key => fields[key] === '');
+
+        if (emptyFields.length > 0) {
+            setEmptyFields(emptyFields);
+            setError("Please fill in all fields")
+            return; // Stop the function if there are empty fields
         }
-        if (response.ok) {
-            setName('')
-            setEmail('')
-            setSubject('')
-            setQuestions('')
-            setError(null)
-            setEmptyFields([])
-            console.log('New contact form added')
-            dispatch({type: 'CREATE_CONTACT_FORM', payload: json})
-        }
-    
-        console.log('Sending request', { email, subject, questions, name })
-    
-        if(email && subject && questions && name) {
-            axios
-                .post('https://backend-htwc.onrender.com/send_email', {
-                    name,
-                    email,
-                    subject,
-                    questions
-                })
-                .then(() => {
-                    alert('Message sent successfully')
-                })
-                .catch(() => alert('Whoops'))
-            return;
-        }
-            return alert("Fill in all fields to continue")
-        }
+
+        emailjs.sendForm('service_ho70w9r', 'template_m44o5lo', form.current, '8dknuNbxM_Jk49Nad')
+            .then((res) => {
+                console.log(res.text);
+                setName('')
+                setEmail('')
+                setQuestions('')
+                setError(null)
+                setEmptyFields([])
+                console.log('New contact form added')
+                alert('Message sent successfully!')
+            }, (error) => {
+                console.log(error.text);
+            });
+    }
+
     
     return (
-        <form className="create" onSubmit={handleSubmit}>
+        <form ref={form} className="create" onSubmit={sendEmail}>
             <h3>Contact Form</h3>
             
             <label>Name:</label>
@@ -69,6 +55,7 @@ const ContactForm = () => {
             onChange={(e) => setName(e.target.value)}
             value={ name }
             className={emptyFields.includes('name') ? 'error' : ''}
+            name="name"
             />
             
             <label>Email:</label>
@@ -77,13 +64,7 @@ const ContactForm = () => {
             onChange={(e) => setEmail(e.target.value)}
             value={ email }
             className={emptyFields.includes('email') ? 'error' : ''}
-            />
-
-            <label>Subject:</label>
-            <textarea 
-            onChange={(e) => setSubject(e.target.value)}
-            value={ subject }
-            className={emptyFields.includes('subject') ? 'error' : ''}
+            name="email"
             />
 
             <label>Questions:</label>
@@ -91,6 +72,7 @@ const ContactForm = () => {
             onChange={(e) => setQuestions(e.target.value)}
             value={ questions }
             className={emptyFields.includes('questions') ? 'error' : ''}
+            name="questions"
             />
 
             <button>SEND</button>
